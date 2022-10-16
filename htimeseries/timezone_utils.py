@@ -1,4 +1,9 @@
 import datetime as dt
+from zoneinfo import ZoneInfo
+
+
+class UnknownTimezone(Exception):
+    pass
 
 
 class TzinfoFromString(dt.tzinfo):
@@ -42,3 +47,18 @@ class TzinfoFromString(dt.tzinfo):
 
     def tzname(self, adatetime):
         return self.name
+
+
+def naive_to_aware(timestamp, ahtimeseries, default_timezone=None):
+    tzstring = getattr(ahtimeseries, "timezone", None)
+    if tzstring is None and default_timezone is None:
+        raise UnknownTimezone(
+            f"Can't convert timestamp {timestamp} to aware since no time zone has been "
+            "provided"
+        ) 
+    elif tzstring is None:
+        tzinfo = ZoneInfo(default_timezone)
+    else:
+        tzinfo = TzinfoFromString(tzstring)
+    return timestamp.replace(tzinfo=tzinfo)
+    

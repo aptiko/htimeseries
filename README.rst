@@ -113,6 +113,21 @@ file format (described below).
 
 .. _tzinfo: https://docs.python.org/3/library/datetime.html#tzinfo-objects
 
+naive_to_aware
+==============
+
+::
+
+    from htimeseries imort UnknownTimezone, naive_to_aware
+
+    aware_timestamp = naive_to_aware(naive_timestamp, ahtimeseries, default_timezone=None)
+
+``naive_to_aware()`` converts the ``naive_timestamp`` to aware by
+attaching to it the time zone in ``ahtimeseries.timezone``, or if the
+attribute is not set, ``default_timezone``. If neither is set, it raises
+a ``UnknownTimezone`` exception.
+
+
 Formats
 =======
 
