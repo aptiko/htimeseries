@@ -4,6 +4,7 @@ import textwrap
 from configparser import ParsingError
 from io import StringIO
 from unittest import TestCase
+from zoneinfo import ZoneInfo
 
 import numpy as np
 import pandas as pd
@@ -402,7 +403,8 @@ class ReadFilelikeTestCaseBase:
 
     def test_dates(self):
         np.testing.assert_array_equal(
-            self.ts.data.index, pd.date_range("2008-02-07 11:20", periods=5, freq="10T")
+            self.ts.data.index,
+            pd.date_range("2008-02-07 11:20+0200", periods=5, freq="10T"),
         )
 
     def test_values(self):
@@ -416,19 +418,12 @@ class ReadFilelikeTestCaseBase:
         np.testing.assert_array_equal(self.ts.data.values[:, 1], expected)
 
 
-class HTimeseriesReadFilelikeTestCase(ReadFilelikeTestCaseBase, TestCase):
-    def setUp(self):
-        s = StringIO(tenmin_test_timeseries)
-        s.seek(0)
-        self.ts = HTimeseries(s)
-
-
 class HTimeseriesReadTwoColumnsTestCase(ReadFilelikeTestCaseBase, TestCase):
     def setUp(self):
         string = self._remove_flags_column(tenmin_test_timeseries)
         s = StringIO(string)
         s.seek(0)
-        self.ts = HTimeseries(s)
+        self.ts = HTimeseries(s, default_tzinfo=ZoneInfo("Etc/GMT-2"))
 
     def _remove_flags_column(self, s):
         return re.sub(r",[^,]*$", "", s, flags=re.MULTILINE) + "\n"
@@ -443,7 +438,7 @@ class HTimeseriesReadMixOf2And3ColumnsTestCase(ReadFilelikeTestCaseBase, TestCas
         string = self._remove_empty_flags_column(tenmin_test_timeseries)
         s = StringIO(string)
         s.seek(0)
-        self.ts = HTimeseries(s)
+        self.ts = HTimeseries(s, default_tzinfo=ZoneInfo("Etc/GMT-2"))
 
     def _remove_empty_flags_column(self, s):
         return re.sub(r",$", "", s, flags=re.MULTILINE) + "\n"
