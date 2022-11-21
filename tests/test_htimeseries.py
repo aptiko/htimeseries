@@ -4,7 +4,10 @@ import textwrap
 from configparser import ParsingError
 from io import StringIO
 from unittest import TestCase
-from zoneinfo import ZoneInfo
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo
 
 import numpy as np
 import pandas as pd
