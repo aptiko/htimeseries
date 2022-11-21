@@ -1,4 +1,5 @@
 import datetime as dt
+
 try:
     from zoneinfo import ZoneInfo
 except ImportError:
@@ -58,10 +59,9 @@ def naive_to_aware(timestamp, ahtimeseries, default_timezone=None):
         raise UnknownTimezone(
             f"Can't convert timestamp {timestamp} to aware since no time zone has been "
             "provided"
-        ) 
+        )
     elif tzstring is None:
         tzinfo = ZoneInfo(default_timezone)
     else:
         tzinfo = TzinfoFromString(tzstring)
     return timestamp.replace(tzinfo=tzinfo)
-    

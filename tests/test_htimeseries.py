@@ -4,6 +4,7 @@ import textwrap
 from configparser import ParsingError
 from io import StringIO
 from unittest import TestCase
+
 try:
     from zoneinfo import ZoneInfo
 except ImportError:
@@ -227,6 +228,13 @@ standard_empty_dataframe = pd.DataFrame(
     columns=["value", "flags"],
 )
 standard_empty_dataframe.index.name = "date"
+
+
+class HTimeseriesInvalidArgumentTestCase(TestCase):
+    def test_raises_on_invalid_argument(self):
+        msg = r"HTimeseries.__init__\(\) got an unexpected keyword argument 'invalid'"
+        with self.assertRaisesRegex(TypeError, msg):
+            HTimeseries(invalid=42)
 
 
 class HTimeseriesEmptyTestCase(TestCase):
@@ -613,7 +621,10 @@ class HTimeseriesReadFileFormatTestCase(TestCase):
 
     def test_dates(self):
         np.testing.assert_array_equal(
-            self.ts.data.index, pd.date_range("2008-02-07 11:20", periods=5, freq="10T")
+            self.ts.data.index,
+            pd.date_range(
+                "2008-02-07 11:20", periods=5, freq="10T", tz=ZoneInfo("Etc/GMT-2")
+            ),
         )
 
     def test_values(self):

@@ -1,5 +1,4 @@
 import datetime as dt
-from io import StringIO
 from unittest import TestCase
 
 from htimeseries import HTimeseries, TzinfoFromString, UnknownTimezone, naive_to_aware
