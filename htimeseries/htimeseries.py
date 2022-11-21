@@ -379,7 +379,7 @@ class TimeseriesStreamReader:
 
     def get_data(self):
         return TimeseriesRecordsReader(
-            self.f, self.start_date, self.end_date, tzinfo = self.default_tzinfo
+            self.f, self.start_date, self.end_date, tzinfo=self.default_tzinfo
         ).read()
 
 
