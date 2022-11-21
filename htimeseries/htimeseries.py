@@ -362,6 +362,11 @@ class HTimeseries:
         except AttributeError:
             tzinfo = kwargs["default_tzinfo"]
         self.data = reader.get_data(tzinfo)
+        if self.data.size and (tzinfo is None):
+            raise TypeError(
+                "Cannot read filelike object without timezone or default_tzinfo "
+                "specified"
+            )
 
     def write(self, f, format=TEXT, version=5):
         writer = TimeseriesStreamWriter(self, f, format=format, version=version)
@@ -369,14 +374,12 @@ class HTimeseries:
 
 
 class TimeseriesStreamReader:
-    def __init__(
-        self, f, *, format=None, start_date=None, end_date=None, default_tzinfo=None
-    ):
+    def __init__(self, f, **kwargs):
         self.f = f
-        self.specified_format = format
-        self.start_date = start_date
-        self.end_date = end_date
-        self.default_tzinfo = default_tzinfo
+        self.specified_format = kwargs["format"]
+        self.start_date = kwargs["start_date"]
+        self.end_date = kwargs["end_date"]
+        self.default_tzinfo = kwargs["default_tzinfo"]
 
     def get_metadata(self):
         if self.format == HTimeseries.FILE:
